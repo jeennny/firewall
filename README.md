@@ -25,7 +25,8 @@ while [ $CONTROL=0 ] ;
 	           		echo "USB EN LISTA BLANCA $USBNAME "
 	           		echo "SELECCIONA UNA OPCION ."
 	           		echo "1)Es mi USB (montar) "
-	           		echo "2)No la Reconozco (salir)"
+	           		echo "2)Desmontar"
+				echo "3)salir"
 	           		read n
 	        		case $n in
 	              			(1)	
@@ -37,6 +38,11 @@ while [ $CONTROL=0 ] ;
 					ls  /media/usb
 	              			;;
 	            			(2)
+					sudo umount /media/usb
+					echo "Listo"
+					exit	
+					;;
+					(3)
 	          			exit
 	         		esac
 	         		sudo dmesg --clear
