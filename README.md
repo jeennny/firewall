@@ -1,5 +1,3 @@
-# firewall
-#1
 #!/bin/bash
 start (){ 
 echo "FIREWALL USB."
@@ -14,10 +12,15 @@ while [ $CONTROL=0 ] ;
 			CONTROL=1
 			for USBDEV in `df | grep media | awk {'print $6'}` ;
 			do
-			USBNAME=`echo $USBDEV | cut -d "/" -f 4`
-        		#USBSERIAL= $(dmesg | tail -n20 | grep ": Serial" | awk '{print $6}' )
-			echo -e  "Se ha detectado un dispositivo nuevo:$USBNAME "
+			#USBNAME=`echo $USBDEV | cut -d "/" -f 4`
+       			USB=$( dmesg | tail -n 20 | grep ": Serial" | awk '{print $5}' )
+			echo   "Se ha detectado un dispositivo nuevo: $USB "
 			Titulo="Menu"
+        		Pregunta="Se detecto una USB, ¿Que desa hacer con el ?:"
+
+	      		#grep -F $USB /home/wolf/Escritorio/Proyecto/lista_blanca1.txt)
+			#echo $( grep $USB $lista_blanca1 )
+###
         		Pregunta="Se detecto una USB, ¿Que desa hacer con el ?:"
 			#echo "Se ha detectado la usb con No de Serie : $USBSERIAL "
 	      		echo $(grep -c $USBNAME lista_blanca1.txt )
@@ -47,37 +50,47 @@ while [ $CONTROL=0 ] ;
 	         		esac
 	         		sudo dmesg --clear
 	         		break;
-	    		 else
-				 echo $(grep -c $USBNAME lista_negra.txt )
-				 if [ $? -ne 0 ]; then
+####
+			 elif [ $( grep -c $USB lista2.text ) == 1 ];then
+				#if [ $? -eq 0 ]; then
 	       				echo "USB EN LISTA NEGRA PELIGROSA  "
-	       				echo "$USBNAME USB PELIGROSA"
+	       				echo " USB PELIGROSA"
 					echo " (1)¿Mandar a lista Blanca? (2) No confiar y Salir"
 	       				read  op
-	       				case $opcion in
-	           				(1) 
-						echo "Mandar a lista Blanca"
-						echo $USBNAME >> lista_blanca1.text
+	       				case $op in
+	           				(1)
+						echo "Mandado a lista Blanca"
+						echo $USB >> lista1.text
+						echo "Montando usb... No lo extraiga"
+						sudo mount -t vfat /dev/sdb1 /media/usb
+						sleep 2s
+						echo "Dispositivo listo para usarse"
+						echo "Contenido de la unidad USB $USB"
+						ls  /media/usb
+						exit
+						;;
+
 	           				(2)
 						echo "bye."
 	           				exit
 	       				esac
 	       				sudo dmesg --clear
-	       				break;
+	       				#//break;
 				else
-Opciones=("1) Reconozco este dispositivo (Mandar a lista blanca)" "2) No lo Reconozco (Mandar a lista negra)" "3) salir")
-while opt="$(zenity --title="$Titulo" --text="$Pregunta" --list --column="Opciones" "${Opciones[@] $Versiones}")";
-	do
-		case $opt in
-          		"${Opciones[0]}" )
-                	echo "Has elegido $opt"
-                	zenity --info --text="Has elegido $opt"
-                	echo $USBSERIAL >> lista_blanca1.text
-                	echo "Se ha mandado a la lista blanca. ¿Deseas montar la USB en tu Computadora?"
-                			echo "1) montar usb "
-                			echo "2) desmontar usb"
-                	read n
-                	case $n in
+					Opciones=("1) Reconozco este dispositivo (Mandar a lista blanca)" "2) No lo Reconozco (Mandar a lista negra)" "3) salir")
+					while opt="$(zenity --title="$Titulo" --text="$Pregunta" --list --column="Opciones" "${Opciones[@] $Versiones}")"; do
+						case $opt in
+          					"${Opciones[0]}" )
+                					echo "Has elegido $opt"
+                					zenity --info --text="Has elegido $opt"
+                					echo $USB >> lista1.text
+                					echo "Se ha mandado a la lista blanca. ¿Deseas montar la USB en tu Computadora?"
+                					echo "1) montar usb "
+                					echo "2) desmontar usb"
+                					read n
+                					case $n in
+							
+#######
                 		(1) echo "Montando usb... No lo extraiga"
                 		sudo mount -t vfat /dev/sdb1 /media/usb
                 		sleep 2s
@@ -122,6 +135,8 @@ while opt="$(zenity --title="$Titulo" --text="$Pregunta" --list --column="Opcion
 	sleep 10
 done
 exit 0
+
+########
 }
 
 stop(){
