@@ -65,6 +65,7 @@ while [ $CONTROL=0 ] ;
 						echo "Mandado a lista Blanca"
 						echo $USB >> lista1.text #SE AGREGA A LA LISTA BLANCA
 						echo "Montando usb... No lo extraiga"
+						#COMANDO DE MONTAJE DE LA USB EN EL EQUIPO.
 						sudo mount -t vfat /dev/sdb1 /media/usb #SE MONTA
 						sleep 2s
 						echo "Dispositivo listo para usarse"
@@ -80,6 +81,7 @@ while [ $CONTROL=0 ] ;
 	       				sudo dmesg --clear
 	       				#//break;
 				else
+				#MENU DE OPCIONES, SE ACTIVA CUANDO LA MEMORIA NO SE HA SIDO REGISTRADA NUNCA EN EL EQUIPO.
 					Opciones=("1) Reconozco este dispositivo (Mandar a lista blanca)" "2) No lo Reconozco (Mandar a lista negra)" "3) salir")
 					while opt="$(zenity --title="$Titulo" --text="$Pregunta" --list --column="Opciones" "${Opciones[@] $Versiones}")"; do
 						case $opt in
@@ -93,7 +95,7 @@ while [ $CONTROL=0 ] ;
                 					read n
                 					case $n in
 							
-#######
+####### #  SE PEDIRA LA CONTRASEÑA DEL USUARIO Y SE ABRIRAN LOS ARCHIVOS QUE CONTIENE LA USB
       							 (1) echo "Montando usb... No lo extraiga"
                 					sudo mount -t vfat /dev/sdb1 /media/usb
                 					sleep 2s
@@ -115,6 +117,7 @@ while [ $CONTROL=0 ] ;
 							exit
               						;;
           					"${Opciones[1]}")
+						#Se niega el acceso al equipo para la usb mandada a esta lista.
                 					echo "Has elegido $opt"
                 					zenity --info --text="Has elegido $opt"
 							echo $USB >> lista2.text
