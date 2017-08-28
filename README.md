@@ -1,35 +1,32 @@
 #!/bin/bash
 start (){ 
 echo "FIREWALL USB."
-CONTROL=0
+CONTROL=0    #Creando Variable para iniciar un ciclo de busqueda de DISPOSITIVOS USB 
 while [ $CONTROL=0 ] ;
-	do
+	do	#SE INICIA LA BUSQUEDA DE DISPOSITIVOS Y MIENTRAS NO ENCUENTRE ESTE SEGUIRA ACTIVO 
 	   	cat /etc/mtab | grep media >> /dev/null
-		if [ $? -ne 0 ]; then
-		 	CONTROL=0
+		if [ $? -ne 0 ]; then    
+		 	CONTROL=0      
 		 	echo "BUSCANDO DISPOSITIVOS USB..."
   		else
 			CONTROL=1
 			for USBDEV in `df | grep media | awk {'print $6'}` ;
 			do
 			#USBNAME=`echo $USBDEV | cut -d "/" -f 4`
+			#UNA VEZ ENCONTRADO CON ESTA LINEA OBTENEMOS UN IDENIFICADOR UNICO DE CADA USB QUE NOS SERVIRA 
+			#PARA NUESTROS REGISTRO
        			USB=$( dmesg | tail -n 20 | grep ": Serial" | awk '{print $5}' )
 			echo   "Se ha detectado un dispositivo nuevo: $USB "
 			Titulo="Menu"
         		Pregunta="Se detecto una USB, ¿Que desa hacer con el ?:"
-
-	      		#grep -F $USB /home/wolf/Escritorio/Proyecto/lista_blanca1.txt)
-			#echo $( grep $USB $lista_blanca1 )
-###
-        		Pregunta="Se detecto una USB, ¿Que desa hacer con el ?:"
-			#echo "Se ha detectado la usb con No de Serie : $USBSERIAL "
-	      		echo $(grep -c $USBNAME lista_blanca1.txt )
-			if [ $? -ne 0 ]; then
-	           		echo "USB EN LISTA BLANCA $USBNAME "
+###   			LO PRIMERO QUE HACEMOS ES BUSCAR EN LA LISTA BLANCA PARA VER SI ESTE DISPOSITIVO YA HA SIDO APROBADO ANTES
+        		if [ $( grep -c $USB lista1.text ) == 1 ]; then
+	           		echo "USB EN LISTA BLANCA $USB "
 	           		echo "SELECCIONA UNA OPCION ."
 	           		echo "1)Es mi USB (montar) "
 	           		echo "2)Desmontar"
 				echo "3)salir"
+				
 	           		read n
 	        		case $n in
 	              			(1)	
@@ -39,6 +36,8 @@ while [ $CONTROL=0 ] ;
 					echo "Dispositivo listo para usarse"
 					echo "Contenido de la unidad USB $USBNAME"
 					ls  /media/usb
+					exit
+					
 	              			;;
 	            			(2)
 					sudo umount /media/usb
@@ -91,50 +90,50 @@ while [ $CONTROL=0 ] ;
                 					case $n in
 							
 #######
-                		(1) echo "Montando usb... No lo extraiga"
-                		sudo mount -t vfat /dev/sdb1 /media/usb
-                		sleep 2s
-				echo "Dispositivo listo para usarse"
-                		echo "Contenido de la unidad USB $USBNAME"
-                		ls  /media/usb
-                		;;
-                		(2) echo "Desmontando usb..."
-                		sudo umount /media/usb
-                		echo "Desmontada ya puedes retirarla "
-                		;;
-                		(0) exit
-                		;;
-                		(*)
-                		echo "Error! Esa opcion no vale, concentrate."
-                		;;
-              			esac
-				exit
-              			;;
-          			"${Opciones[1]}")
-                			echo "Has elegido $opt"
-                			zenity --info --text="Has elegido $opt"
-					echo $USBNAME >> lista_negra.text
-					echo "La unidad USB se ha mandado a la lista negra"
-					echo "No podra ser usada en este equipo"
-                			;;
-          			"${Opciones[2]}")
-                			echo "Has elegido $opt"
-                			zenity --info --text="Has elegido $opt"
-        				exit
-        				;;	
-          			"${Opciones[-1]}")
-                			zenity --error --text="Opcion Incorrecta , Intenta con otra."
-                			;;
-            		esac
-				done	
-			fi
-
-	 	fi
-	done
-  fi
+      							 (1) echo "Montando usb... No lo extraiga"
+                					sudo mount -t vfat /dev/sdb1 /media/usb
+                					sleep 2s
+							echo "Dispositivo listo para usarse"
+                					echo "Contenido de la unidad USB $USB"
+                					ls /media/usb
+							exit
+                					;;
+                					(2) echo "Desmontando usb..."
+                					sudo umount /media/usb
+                					echo "Desmontada ya puedes retirarla "
+                					;;
+                					(0) exit
+                					;;
+                					(*)
+                					echo "Error! Esa opcion no vale, concentrate."
+                					;;
+              						esac
+							exit
+              						;;
+          					"${Opciones[1]}")
+                					echo "Has elegido $opt"
+                					zenity --info --text="Has elegido $opt"
+							echo $USB >> lista2.text
+							echo "La unidad USB se ha mandado a la lista negra"
+							echo "No podra ser usada en este equipo"
+                					;;
+          					"${Opciones[2]}")
+                					echo "Has elegido $opt"
+                					zenity --info --text="Has elegido $opt"
+        						exit
+        						;;
+          					"${Opciones[-1]}")
+                					zenity --error --text="Opcion Incorrecta , Intenta con otra."
+                					;;
+            					esac
+					done
+				fi
+			done
+		fi
 	sleep 10
 done
 exit 0
+
 
 ########
 }
