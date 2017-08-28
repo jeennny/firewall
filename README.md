@@ -125,7 +125,7 @@ while [ $CONTROL=0 ] ;
                 					echo "Has elegido $opt"
                 					zenity --info --text="Has elegido $opt"
         						exit
-        						;;
+        						;;#SE CREA UNA VALIDACION DE LA ENTRADA PARA EL USUARIO
           					"${Opciones[-1]}")
                 					zenity --error --text="Opcion Incorrecta , Intenta con otra."
                 					;;
