@@ -1,4 +1,8 @@
 #!/bin/bash
+#	@file firewall.sh
+#	@Authors Alejandro (2) && Jennifer (22) 
+#	@date 27/08/17
+
 start (){ 
 echo "FIREWALL USB."
 CONTROL=0    #Creando Variable para iniciar un ciclo de busqueda de DISPOSITIVOS USB 
@@ -20,7 +24,7 @@ while [ $CONTROL=0 ] ;
 			Titulo="Menu"
         		Pregunta="Se detecto una USB, ¿Que desa hacer con el ?:"
 ###   			LO PRIMERO QUE HACEMOS ES BUSCAR EN LA LISTA BLANCA PARA VER SI ESTE DISPOSITIVO YA HA SIDO APROBADO ANTES
-        		if [ $( grep -c $USB lista1.text ) == 1 ]; then
+        		if [ $( grep -c $USB lista1.text ) == 1 ]; then # SI LO ENCUENTRA REGRESARA UN 1 Y ENTRARA AL IF
 	           		echo "USB EN LISTA BLANCA $USB "
 	           		echo "SELECCIONA UNA OPCION ."
 	           		echo "1)Es mi USB (montar) "
@@ -31,16 +35,16 @@ while [ $CONTROL=0 ] ;
 	        		case $n in
 	              			(1)	
 					echo "Montando usb... No lo extraiga"
-					sudo mount -t vfat /dev/sdb1 /media/usb
+					sudo mount -t vfat /dev/sdb1 /media/usb #MONTA LA USB EN LA RUTA SEÑALADA 
 					sleep 2s
 					echo "Dispositivo listo para usarse"
 					echo "Contenido de la unidad USB $USBNAME"
-					ls  /media/usb
+					ls  /media/usb #NOS MUESTRA EL CONTENIDO DEL DISPOSITIVO 
 					exit
 					
 	              			;;
 	            			(2)
-					sudo umount /media/usb
+					sudo umount /media/usb #DESMONTA LA USB
 					echo "Listo"
 					exit	
 					;;
@@ -50,7 +54,7 @@ while [ $CONTROL=0 ] ;
 	         		sudo dmesg --clear
 	         		break;
 ####
-			 elif [ $( grep -c $USB lista2.text ) == 1 ];then
+			 elif [ $( grep -c $USB lista2.text ) == 1 ];then #BUSCA EN LA LISTA NEGRA, SI LO ENCUENTA REGRESA UN 1 Y DESPLIEGA EL MENU 
 				#if [ $? -eq 0 ]; then
 	       				echo "USB EN LISTA NEGRA PELIGROSA  "
 	       				echo " USB PELIGROSA"
@@ -59,13 +63,13 @@ while [ $CONTROL=0 ] ;
 	       				case $op in
 	           				(1)
 						echo "Mandado a lista Blanca"
-						echo $USB >> lista1.text
+						echo $USB >> lista1.text #SE AGREGA A LA LISTA BLANCA
 						echo "Montando usb... No lo extraiga"
-						sudo mount -t vfat /dev/sdb1 /media/usb
+						sudo mount -t vfat /dev/sdb1 /media/usb #SE MONTA
 						sleep 2s
 						echo "Dispositivo listo para usarse"
 						echo "Contenido de la unidad USB $USB"
-						ls  /media/usb
+						ls  /media/usb#DESPLIEGA EL CONTENIDO DEL DISPOSITIVO 
 						exit
 						;;
 
@@ -82,10 +86,10 @@ while [ $CONTROL=0 ] ;
           					"${Opciones[0]}" )
                 					echo "Has elegido $opt"
                 					zenity --info --text="Has elegido $opt"
-                					echo $USB >> lista1.text
+                					echo $USB >> lista1.text #SE AGREGA LISTA BLANCA
                 					echo "Se ha mandado a la lista blanca. ¿Deseas montar la USB en tu Computadora?"
-                					echo "1) montar usb "
-                					echo "2) desmontar usb"
+                					echo "1) montar usb " # COMANDO MOUNT 
+                					echo "2) desmontar usb" #COMANDO UMOUNT
                 					read n
                 					case $n in
 							
@@ -135,16 +139,16 @@ done
 exit 0
 
 
-########
+######## PARA DEMONIZAR AGRAGAMOS LAS SIGUIENTES FUNCIONES
 }
-
+#PARAR EL DEMONIO
 stop(){
  echo -n $"Stopping service: "
  $shutdown
  RETVAL=$?
  echo
 }
-
+#REINICIAR
 restart(){
  stop
  sleep 10
